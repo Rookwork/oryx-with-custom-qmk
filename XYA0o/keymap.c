@@ -1,5 +1,6 @@
 #include QMK_KEYBOARD_H
 #include "version.h"
+#include "features/achordion.h"
 #define MOON_LED_LEVEL LED_LEVEL
 #define ML_SAFE_RANGE SAFE_RANGE
 
@@ -8,14 +9,16 @@ enum custom_keycodes {
   MAC_MISSION_CONTROL,
 };
 
-
+void matrix_scan_user(void) {
+  achordion_task();
+}
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
     KC_NO,          KC_NO,          KC_NO,          LALT(LCTL(LSFT(KC_SPACE))),KC_NO,          KC_NO,                                          KC_NO,          KC_NO,          LALT(LCTL(LSFT(KC_SPACE))),KC_NO,          KC_NO,          KC_ESCAPE,      
     KC_NO,          KC_Q,           KC_W,           KC_E,           KC_R,           KC_T,                                           KC_Y,           KC_U,           KC_I,           KC_O,           KC_P,           KC_NO,          
     KC_NO,          KC_A,           KC_S,           MT(MOD_LCTL, KC_D),MT(MOD_LSFT, KC_F),KC_G,                                           KC_H,           MT(MOD_RSFT, KC_J),MT(MOD_RCTL, KC_K),KC_L,           KC_SCLN,        KC_NO,          
-    KC_NO,          MT(MOD_LGUI, KC_Z),MT(MOD_LALT, KC_X),KC_C,           KC_V,           KC_B,                                           KC_N,           KC_M,           KC_COMMA,       MT(MOD_RALT, KC_DOT),MT(MOD_RGUI, KC_SLASH),KC_NO,          
+    KC_A,          MT(MOD_LGUI, KC_Z),MT(MOD_LALT, KC_X),KC_C,           KC_V,           KC_B,                                           KC_N,           KC_M,           KC_COMMA,       MT(MOD_RALT, KC_DOT),MT(MOD_RGUI, KC_SLASH),KC_NO,          
                                                     LT(1,KC_BSPC),  LT(2,KC_ENTER),                                 LT(4,KC_TAB),   LT(3,KC_SPACE)
   ),
   [1] = LAYOUT_voyager(
@@ -73,6 +76,7 @@ combo_t key_combos[COMBO_COUNT] = {
 
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  if (!process_achordion(keycode, record)) { return false; }
   switch (keycode) {
     case MAC_MISSION_CONTROL:
       HCS(0x29F);
